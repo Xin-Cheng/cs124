@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <cstddef>
+
 class Storage
 {
 public:
@@ -19,17 +20,21 @@ class Matrix
 {
 public:
     Storage* storage;
-    size_t left, top, right, bottom;
+    size_t top, left, bottom, right;
     
 public:
-    Matrix(Storage* storage, size_t left, size_t top, size_t right, size_t bottom);
+    Matrix(Storage* storage, size_t top, size_t left, size_t bottom, size_t right);
     ~Matrix();
 
 public:
     int* operator[](int index);
 
 public:
-    static Storage* con_matrix_multiply(Matrix m1, Matrix m2);
+    static Storage* con_matrix_multiply(Matrix& m1, Matrix& m2);
+    Storage* add(Matrix& m2);
+
+private:
+    int* getRow(int index);
 };
 
 #endif

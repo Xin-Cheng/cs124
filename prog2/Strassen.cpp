@@ -18,10 +18,11 @@ int main()
     Storage* s1 = new Storage(a1, dim, dim);
     Storage* s2 = new Storage(a2, dim, dim);
 
-    Matrix m1 = Matrix(s1, 0, 0, dim - 1, dim - 1);
-    Matrix m2 = Matrix(s2, 0, 0, dim - 1, dim - 1);
+    Matrix m1 = Matrix(s1, 0, 0, 1, 1);
+    Matrix m2 = Matrix(s1, 0, 2, 1, 2);
 
-    Storage* s = Matrix::con_matrix_multiply(m1, m2);
+    //Storage* s = Matrix::con_matrix_multiply(m1, m2);
+    Storage* s = m1.add(m2);
     print_matrix(s);
     return 0;
 }
