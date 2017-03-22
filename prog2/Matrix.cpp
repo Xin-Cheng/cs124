@@ -73,6 +73,30 @@ Storage* Matrix::add(Matrix& m2)
     return result;
 }
 
+Storage* Matrix::subtract(Matrix& m2)
+{
+    size_t tr = this->bottom - this->top + 1;
+    size_t mr = m2.bottom - m2.top + 1;
+    size_t tc = this->right - this->left + 1;
+    size_t mc = m2.right - m2.left + 1;
+    size_t row = tr > mr ? tr : mr;
+    size_t column = tc > mc ? tc : mc;
+    Storage* result = new Storage(row, column);
+    for (size_t i = 0; i < row; i++)
+    {
+        for (size_t j = 0; j < column; j++)
+        {
+            int left = 0, right = 0;
+            if (tr > i && tc > j)
+                left = this->getRow(i)[j];
+            if (mr > i && mc > j)
+                right = m2[i][j];
+            result->elements[i*column + j] = left - right;
+        }
+    }
+    return result;
+}
+
 Storage* Matrix::con_matrix_multiply(Matrix& m1, Matrix& m2)
 {
     size_t dim = m1.bottom + 1;

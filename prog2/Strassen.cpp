@@ -30,11 +30,11 @@ int main()
 void print_matrix(Storage* s) {
     size_t row = s->rowCount;
     size_t column = s->columnCount;
-    for (size_t i = 0; i < s->rowCount; i++)
+    for (size_t i = 0; i < row; i++)
     {
-        for (size_t j = 0; j < s->columnCount; j++)
+        for (size_t j = 0; j < column; j++)
         {
-            printf("%d ", s->elements[i*row + j]);
+            printf("%d ", s->elements[i*column + j]);
         }
         printf("\n");
     }
