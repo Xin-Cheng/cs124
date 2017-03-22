@@ -31,8 +31,8 @@ public:
 
 public:
     static Storage* con_matrix_multiply(Matrix& m1, Matrix& m2);
-    Storage* add(Matrix& m2);
-    Storage* subtract(Matrix& m2);
+    Matrix* add(Matrix& m2);
+    Matrix* subtract(Matrix& m2);
 
 private:
     int* getRow(int index);

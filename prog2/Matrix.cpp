@@ -49,7 +49,7 @@ int* Matrix::operator[](int index)
     return getRow(index);
 }
 
-Storage* Matrix::add(Matrix& m2)
+Matrix* Matrix::add(Matrix& m2)
 {
     size_t tr = this->bottom - this->top + 1;
     size_t mr = m2.bottom - m2.top + 1;
@@ -57,7 +57,7 @@ Storage* Matrix::add(Matrix& m2)
     size_t mc = m2.right - m2.left + 1;
     size_t row = tr > mr ? tr : mr;
     size_t column = tc > mc ? tc : mc;
-    Storage* result = new Storage(row, column);
+    Storage* s = new Storage(row, column);
     for (size_t i = 0; i < row; i++)
     {
         for (size_t j = 0; j < column; j++)
@@ -67,13 +67,14 @@ Storage* Matrix::add(Matrix& m2)
                 left = this->getRow(i)[j];
             if (mr > i && mc > j)
                 right = m2[i][j];
-            result->elements[i*column + j] = left + right;
+            s->elements[i*column + j] = left + right;
         }
     }
-    return result;
+    Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
+    return m;
 }
 
-Storage* Matrix::subtract(Matrix& m2)
+Matrix* Matrix::subtract(Matrix& m2)
 {
     size_t tr = this->bottom - this->top + 1;
     size_t mr = m2.bottom - m2.top + 1;
@@ -81,7 +82,7 @@ Storage* Matrix::subtract(Matrix& m2)
     size_t mc = m2.right - m2.left + 1;
     size_t row = tr > mr ? tr : mr;
     size_t column = tc > mc ? tc : mc;
-    Storage* result = new Storage(row, column);
+    Storage* s = new Storage(row, column);
     for (size_t i = 0; i < row; i++)
     {
         for (size_t j = 0; j < column; j++)
@@ -91,10 +92,11 @@ Storage* Matrix::subtract(Matrix& m2)
                 left = this->getRow(i)[j];
             if (mr > i && mc > j)
                 right = m2[i][j];
-            result->elements[i*column + j] = left - right;
+            s->elements[i*column + j] = left - right;
         }
     }
-    return result;
+    Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
+    return m;
 }
 
 Storage* Matrix::con_matrix_multiply(Matrix& m1, Matrix& m2)
