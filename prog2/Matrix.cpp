@@ -38,80 +38,177 @@ Matrix::~Matrix()
 {
 }
 
-int* Matrix::getRow(int index)
+int Matrix::getElement(size_t row, size_t column)
 {
-    int* p = this->storage->elements;
-    p += (this->top + index)*(this->storage->columnCount) + this->left;
-    return p;
-}
-int* Matrix::operator[](int index)
-{
-    return getRow(index);
+    int element = 0;
+    size_t r = row + this->top;
+    size_t c = column + this->left;
+    if (r < this->storage->rowCount && c < this->storage->columnCount)
+        element = this->storage->elements[r*(this->storage->columnCount) + c];
+    return element;
 }
 
-Matrix* Matrix::add(Matrix& m2)
+Matrix* Matrix::add(Matrix* m1, Matrix* m2)
 {
-    size_t tr = this->bottom - this->top + 1;
-    size_t mr = m2.bottom - m2.top + 1;
-    size_t tc = this->right - this->left + 1;
-    size_t mc = m2.right - m2.left + 1;
-    size_t row = tr > mr ? tr : mr;
-    size_t column = tc > mc ? tc : mc;
+    //m1->print();
+    //m2->print();
+    size_t row = m1->bottom - m1->top + 1;
+    size_t column = m1->right - m1->left + 1;
     Storage* s = new Storage(row, column);
     for (size_t i = 0; i < row; i++)
     {
         for (size_t j = 0; j < column; j++)
         {
-            int left = 0, right = 0;
-            if (tr > i && tc > j)
-                left = this->getRow(i)[j];
-            if (mr > i && mc > j)
-                right = m2[i][j];
-            s->elements[i*column + j] = left + right;
+            s->elements[i*column + j] = m1->getElement(i, j)  + m2->getElement(i, j);
+        }
+    }
+    Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
+    //m->print();
+    //printf("\n");
+    return m;
+}
+
+Matrix* Matrix::subtract(Matrix* m1, Matrix* m2)
+{
+    //m1->print();
+    //m2->print();
+    size_t row = m1->bottom - m1->top + 1;
+    size_t column = m1->right - m1->left + 1;
+    Storage* s = new Storage(row, column);
+    for (size_t i = 0; i < row; i++)
+    {
+        for (size_t j = 0; j < column; j++)
+        {
+            s->elements[i*column + j] = m1->getElement(i, j) - m2->getElement(i, j);
+        }
+    }
+    Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
+    //m->print();
+    //printf("\n");
+    return m;
+}
+
+
+Matrix* Matrix::multiply(Matrix* m1, Matrix* m2)
+{
+    //printf("xxxxxxxxxxxx\n");
+    //m1->print();
+    //m2->print();
+    if (m1->isScaler())
+        return Matrix::con_matrix_multiply(m1, m2);
+
+    size_t dim = (m1->bottom - m1->top + 2)/2;
+    
+    // partition lhs
+    size_t r = m1->top;
+    size_t co = m1->left;
+    Matrix* a = new Matrix(m1->storage, r, co, r+ dim - 1, co + dim - 1);
+    //a->print();
+    Matrix* b = new Matrix(m1->storage, r, co + dim, r + dim - 1, co + 2 * dim - 1);
+    //b->print();
+    Matrix* c = new Matrix(m1->storage, r + dim, co, r + 2 * dim - 1, co + dim - 1);
+    //c->print();
+    Matrix* d = new Matrix(m1->storage, r + dim, co + dim, r + 2 * dim - 1, co + 2 * dim - 1);
+    //d->print();
+    // partition rhs
+    r = m2->top;
+    co = m2->left;
+    Matrix* e = new Matrix(m2->storage, r, co, r + dim - 1, co + dim - 1);
+    //e->print();
+    Matrix* f = new Matrix(m2->storage, r, co + dim, r + dim - 1, co + 2 * dim - 1);
+    //f->print();
+    Matrix* g = new Matrix(m2->storage, r + dim, co, r + 2 * dim - 1, co + dim - 1);
+    //g->print();
+    Matrix* h = new Matrix(m2->storage, r + dim, co + dim, r + 2 * dim - 1, co + 2 * dim - 1);
+    //h->print();
+
+    // compute seven products
+    Matrix* p1 = Matrix::multiply(a, Matrix::subtract(f, h));
+    //p1->print();
+    Matrix* p2 = Matrix::multiply(Matrix::add(a, b), h);
+    Matrix* p3 = Matrix::multiply(Matrix::add(c, d), e);
+    Matrix* p4 = Matrix::multiply(d, Matrix::subtract(g, e));
+    Matrix* p5 = Matrix::multiply(Matrix::add(a, d), Matrix::add(e, h));
+    Matrix* p6 = Matrix::multiply(Matrix::subtract(b, d), Matrix::add(g, h));
+    Matrix* p7 = Matrix::multiply(Matrix::subtract(a, c), Matrix::add(e, f));
+
+    Matrix* aebg = Matrix::subtract(Matrix::add(p5, p4), Matrix::subtract(p2, p6));
+    Matrix* afbh = Matrix::add(p1, p2);
+    Matrix* cedg = Matrix::add(p3, p4);
+    Matrix* cfdh = Matrix::subtract(Matrix::add(p5, p1), Matrix::add(p3, p7));
+    Matrix* m = Matrix::concatenate(aebg, afbh, cedg, cfdh);
+    //m->print();
+    //printf("xxxxxxxxxxxxxxxxxxxx\n");
+    return m;
+}
+
+Matrix* Matrix::concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d)
+{
+    size_t row = c->bottom - c->top + 1 + (a->bottom - a->top + 1);
+    size_t column = b->right - b->left + 1 + (a->right - a->left + 1);
+    Storage* s = new Storage(row, column);
+
+    for (size_t i = 0; i < a->bottom + 1; i++)
+    {
+        for (size_t j = 0; j < column; j++)
+        {
+            if (j < a->right + 1)
+                s->elements[i*column + j] = a->getElement(i, j);
+            else
+                s->elements[i*column + j] = b->getElement(i, j - (a->right + 1));
+        }
+    }
+    // copy c and d
+    for (size_t i = a->bottom + 1; i < row; i++)
+    {
+        for (size_t j = 0; j < column; j++)
+        {
+            if (j < a->right + 1)
+                s->elements[i*column + j] = c->getElement(i - (a->bottom + 1), j);
+            else
+                s->elements[i*column + j] = d->getElement(i - (a->bottom + 1), j - (a->right + 1));
         }
     }
     Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
     return m;
 }
 
-Matrix* Matrix::subtract(Matrix& m2)
+Matrix* Matrix::con_matrix_multiply(Matrix* m1, Matrix* m2)
 {
-    size_t tr = this->bottom - this->top + 1;
-    size_t mr = m2.bottom - m2.top + 1;
-    size_t tc = this->right - this->left + 1;
-    size_t mc = m2.right - m2.left + 1;
-    size_t row = tr > mr ? tr : mr;
-    size_t column = tc > mc ? tc : mc;
+    size_t row = m1->bottom - m1->top + 1;
+    size_t column = m1->right - m1->left + 1;
     Storage* s = new Storage(row, column);
+    Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
     for (size_t i = 0; i < row; i++)
     {
-        for (size_t j = 0; j < column; j++)
+        for (size_t k = 0; k < column; k++)
         {
-            int left = 0, right = 0;
-            if (tr > i && tc > j)
-                left = this->getRow(i)[j];
-            if (mr > i && mc > j)
-                right = m2[i][j];
-            s->elements[i*column + j] = left - right;
-        }
-    }
-    Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
-    return m;
-}
-
-Storage* Matrix::con_matrix_multiply(Matrix& m1, Matrix& m2)
-{
-    size_t dim = m1.bottom + 1;
-    Storage* result = new Storage(dim, dim);
-    for (size_t i = 0; i < dim; i++)
-    {
-        for (size_t k = 0; k < dim; k++)
-        {
-            for (size_t j = 0; j < dim; j++)
+            for (size_t j = 0; j < column; j++)
             {
-                result->elements[i*dim + j] += m1[i][k] * m2[k][j];
+                s->elements[i*column + j] += m1->getElement(i, k) * m2->getElement(k, j);
             }
         }
     }
-    return result;
+    return m;
+}
+
+void Matrix::print()
+{
+    size_t row = this->bottom - this->top + 1;
+    size_t column = this->right - this->left + 1;
+    for (size_t i = 0; i < row; i++)
+    {
+        for (size_t j = 0; j < column; j++)
+        {
+            printf("%d ", this->getElement(i, j));
+        }
+        printf("\n");
+    }
+}
+
+bool Matrix::isScaler()
+{
+    if (this->right == this->left)
+        return true;
+    return false;
 }
