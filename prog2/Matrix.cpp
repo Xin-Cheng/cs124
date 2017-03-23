@@ -50,8 +50,6 @@ int Matrix::getElement(size_t row, size_t column)
 
 Matrix* Matrix::add(Matrix* m1, Matrix* m2)
 {
-    //m1->print();
-    //m2->print();
     size_t row = m1->bottom - m1->top + 1;
     size_t column = m1->right - m1->left + 1;
     Storage* s = new Storage(row, column);
@@ -63,15 +61,11 @@ Matrix* Matrix::add(Matrix* m1, Matrix* m2)
         }
     }
     Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
-    //m->print();
-    //printf("\n");
     return m;
 }
 
 Matrix* Matrix::subtract(Matrix* m1, Matrix* m2)
 {
-    //m1->print();
-    //m2->print();
     size_t row = m1->bottom - m1->top + 1;
     size_t column = m1->right - m1->left + 1;
     Storage* s = new Storage(row, column);
@@ -83,17 +77,12 @@ Matrix* Matrix::subtract(Matrix* m1, Matrix* m2)
         }
     }
     Matrix* m = new Matrix(s, 0, 0, row - 1, column - 1);
-    //m->print();
-    //printf("\n");
     return m;
 }
 
 
 Matrix* Matrix::multiply(Matrix* m1, Matrix* m2)
 {
-    //printf("xxxxxxxxxxxx\n");
-    //m1->print();
-    //m2->print();
     if (m1->isScaler())
         return Matrix::con_matrix_multiply(m1, m2);
 
@@ -103,28 +92,19 @@ Matrix* Matrix::multiply(Matrix* m1, Matrix* m2)
     size_t r = m1->top;
     size_t co = m1->left;
     Matrix* a = new Matrix(m1->storage, r, co, r+ dim - 1, co + dim - 1);
-    //a->print();
     Matrix* b = new Matrix(m1->storage, r, co + dim, r + dim - 1, co + 2 * dim - 1);
-    //b->print();
     Matrix* c = new Matrix(m1->storage, r + dim, co, r + 2 * dim - 1, co + dim - 1);
-    //c->print();
     Matrix* d = new Matrix(m1->storage, r + dim, co + dim, r + 2 * dim - 1, co + 2 * dim - 1);
-    //d->print();
-    // partition rhs
+
     r = m2->top;
     co = m2->left;
     Matrix* e = new Matrix(m2->storage, r, co, r + dim - 1, co + dim - 1);
-    //e->print();
     Matrix* f = new Matrix(m2->storage, r, co + dim, r + dim - 1, co + 2 * dim - 1);
-    //f->print();
     Matrix* g = new Matrix(m2->storage, r + dim, co, r + 2 * dim - 1, co + dim - 1);
-    //g->print();
     Matrix* h = new Matrix(m2->storage, r + dim, co + dim, r + 2 * dim - 1, co + 2 * dim - 1);
-    //h->print();
 
     // compute seven products
     Matrix* p1 = Matrix::multiply(a, Matrix::subtract(f, h));
-    //p1->print();
     Matrix* p2 = Matrix::multiply(Matrix::add(a, b), h);
     Matrix* p3 = Matrix::multiply(Matrix::add(c, d), e);
     Matrix* p4 = Matrix::multiply(d, Matrix::subtract(g, e));
@@ -137,8 +117,7 @@ Matrix* Matrix::multiply(Matrix* m1, Matrix* m2)
     Matrix* cedg = Matrix::add(p3, p4);
     Matrix* cfdh = Matrix::subtract(Matrix::add(p5, p1), Matrix::add(p3, p7));
     Matrix* m = Matrix::concatenate(aebg, afbh, cedg, cfdh);
-    //m->print();
-    //printf("xxxxxxxxxxxxxxxxxxxx\n");
+
     return m;
 }
 

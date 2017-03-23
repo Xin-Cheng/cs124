@@ -30,6 +30,7 @@ public:
     int getElement(size_t row, size_t column);
 
 public:
+    void print();
     static Matrix* con_matrix_multiply(Matrix* m1, Matrix* m2);
     static Matrix* add(Matrix* m1, Matrix* m2);
     static Matrix* subtract(Matrix* m1, Matrix* m2);
@@ -37,7 +38,6 @@ public:
     static Matrix* concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d);
 
 private:
-    void print();
     bool isScaler();
 };
 
