@@ -116,15 +116,22 @@ Matrix* Matrix::multiply(Matrix* m1, Matrix* m2)
     Matrix* afbh = Matrix::add(p1, p2);
     Matrix* cedg = Matrix::add(p3, p4);
     Matrix* cfdh = Matrix::subtract(Matrix::add(p5, p1), Matrix::add(p3, p7));
-    Matrix* m = Matrix::concatenate(aebg, afbh, cedg, cfdh);
+
+    bool trim = (m1->bottom - m1->top) % 2 == 0 ? true : false;
+    Matrix* m = Matrix::concatenate(aebg, afbh, cedg, cfdh, trim);
 
     return m;
 }
 
-Matrix* Matrix::concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d)
+Matrix* Matrix::concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d, bool trim)
 {
     size_t row = c->bottom - c->top + 1 + (a->bottom - a->top + 1);
     size_t column = b->right - b->left + 1 + (a->right - a->left + 1);
+    if (trim)
+    {
+        row--;
+        column--;
+    }
     Storage* s = new Storage(row, column);
 
     for (size_t i = 0; i < a->bottom + 1; i++)

@@ -35,7 +35,7 @@ public:
     static Matrix* add(Matrix* m1, Matrix* m2);
     static Matrix* subtract(Matrix* m1, Matrix* m2);
     static Matrix* multiply(Matrix* m1, Matrix* m2);
-    static Matrix* concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d);
+    static Matrix* concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d, bool trim);
 
 private:
     bool isScaler();
