@@ -119,7 +119,6 @@ Matrix* Matrix::multiply(Matrix* m1, Matrix* m2)
 
     bool trim = (m1->bottom - m1->top) % 2 == 0 ? true : false;
     Matrix* m = Matrix::concatenate(aebg, afbh, cedg, cfdh, trim);
-
     return m;
 }
 

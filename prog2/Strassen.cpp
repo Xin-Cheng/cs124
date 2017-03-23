@@ -1,27 +1,23 @@
+// Programming assignment 2
 #include "Matrix.h"
+#include <stdlib.h> 
+#include <time.h> 
+#include <chrono>
 
+using namespace std;
 void print_matrix(Matrix* m);
 int main()
 {
-    const size_t dim = 7;
-    int* a1 = new int[dim*dim]{
-        1, 1, 1, 1, 1, 1, 1, 
-        1, 2, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1    
-    };
-    int* a2 = new int[dim*dim]{
-        1, 1, 1, 1, 1, 1, 1, 
-        1, 3, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1,
-        1, 1, 1, 1, 1,1, 1
-    };
+    const size_t dim = 300;
+    int* a1 = new int[dim*dim];
+    int* a2 = new int[dim*dim];
+    srand (time(NULL));
+     
+    for (size_t i = 0; i < dim * dim; i++)
+    {
+        a1[i] = rand() % 2;
+        a2[i] = rand() % 2;
+    }
 
     Storage* s1 = new Storage(a1, dim, dim);
     Storage* s2 = new Storage(a2, dim, dim);
@@ -29,11 +25,15 @@ int main()
     Matrix m1 = Matrix(s1, 0, 0, dim - 1, dim - 1);
     Matrix m2 = Matrix(s2, 0, 0, dim - 1, dim - 1);
 
-    int i = m1.getElement(3, 1);
+    auto sstart = chrono::steady_clock::now();
     Matrix* m = Matrix::multiply(&m1, &m2);
+    auto sfinish = chrono::steady_clock::now();
+    auto cstart = chrono::steady_clock::now();
     Matrix* mm = Matrix::con_matrix_multiply(&m1, &m2);
-    m->print();
-    printf("\n");
-    mm->print();
+    auto cfinish = chrono::steady_clock::now();
+    //m->print();
+    printf("%ld: Strassen\n", (sfinish - sstart).count());
+    //mm->print();
+    printf("%ld: Conventional\n", (cfinish - cstart).count());
     return 0;
 }
