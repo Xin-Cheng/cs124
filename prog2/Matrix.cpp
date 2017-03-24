@@ -28,23 +28,25 @@ int Matrix::getElement(vector<int>& storage, size_t row, size_t column)
 void Matrix::add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
     size_t dim = m1.dimension;
+    size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
     for (size_t i = 0; i < dim; i++)
         for (size_t j = 0; j < dim; j++)
-            result[i * dim + j] = m1.getElement(s1, i, j)  + m2.getElement(s2, i, j);
+            result[i * dim + j] = s1[(i + r1) * dim + j + c1] + s2[(i + r2) * dim + j + c2];
 }
 
 void Matrix::subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
     size_t dim = m1.dimension;
+    size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
     for (size_t i = 0; i < dim; i++)
         for (size_t j = 0; j < dim; j++)
-            result[i * dim + j] = m1.getElement(s1, i, j) - m2.getElement(s2, i, j);
+            result[i * dim + j] = s1[(i + r1) * dim + j + c1] - s2[(i + r2) * dim + j + c2];
 }
 
 
 void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
-    if (m1.dimension == 1)
+    if (m1.dimension < 150)
     {
         Matrix::con_matrix_multiply(s1, m1, s2, m2, result);
         return;
@@ -58,10 +60,6 @@ void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, ve
     Matrix b = Matrix(r, co + dim, dim); 
     Matrix c = Matrix(r + dim, co, dim);   
     Matrix d = Matrix(r + dim, co + dim, dim);
-    // a.print(s1);
-    // b.print(s1);
-    // c.print(s1);
-    // d.print(s1);
 
     r = m2.top;
     co = m2.left;
@@ -135,25 +133,26 @@ void Matrix::concatenate(vector<int>& a, vector<int>& b, vector<int>& c, vector<
     for (size_t i = 0; i < dim; i++)
         for (size_t j = 0; j < dimension; j++)
             if (j < dim)
-                result[i * dimension + j] = m.getElement(a, i, j);
+                result[i * dimension + j] = a[i * dim + j];
             else
-                result[i * dimension + j] = m.getElement(b, i, j - dim);
+                result[i * dimension + j] = b[i * dim + j - dim];
     // copy c and d
     for (size_t i = dim; i < dimension; i++)
         for (size_t j = 0; j < dimension; j++)
             if (j < dim)
-                result[i * dimension + j] = m.getElement(c, i - dim, j);
+                result[i * dimension + j] = c[ (i - dim) * dim + j];
             else
-                result[i * dimension + j] = m.getElement(d, i - dim, j - dim);
+                result[i * dimension + j] = d[ (i - dim) * dim + j - dim];
 }
 
 void Matrix::con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
     size_t dim = m1.dimension;
+    size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
     for (size_t i = 0; i < dim; i++)
         for (size_t k = 0; k < dim; k++)
             for (size_t j = 0; j < dim; j++)
-                result[i * dim + j] += m1.getElement(s1, i, k) * m2.getElement(s2, k, j);
+                result[i * dim + j] += s1[(i + r1) * dim + k + c1] * s2[(k + r2) * dim + j + c2];
 }
 
 void Matrix::print(vector<int>& storage)
@@ -162,7 +161,7 @@ void Matrix::print(vector<int>& storage)
     for (size_t i = 0; i < dim; i++)
     {
         for (size_t j = 0; j < dim; j++)
-            printf("%d ", this->getElement(storage, i, j));
+            printf("%d ", storage[ i * dim + j]);
 
         printf("\n");
     }
