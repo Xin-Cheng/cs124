@@ -3,42 +3,29 @@
 
 #include <cstddef>
 #include <stdio.h>
-class Storage
-{
-public:
-    int* elements;
-    size_t rowCount;
-    size_t columnCount;
+#include <vector>
+#include <math.h>
 
-public:
-    Storage(int* elements, size_t rowCount, size_t columnCount);
-    Storage(size_t rowCount, size_t columnCount);
-    ~Storage();
-};
-
+using namespace std;
 class Matrix
 {
 public:
-    Storage* storage;
-    size_t top, left, bottom, right;
+    size_t top, left, dimension;
 
 public:
-    Matrix(Storage* storage, size_t top, size_t left, size_t bottom, size_t right);
+    Matrix(size_t top, size_t left, size_t dimension);
     ~Matrix();
 
 public:
-    int getElement(size_t row, size_t column);
+    int getElement(vector<int>& storage, size_t row, size_t column);
 
 public:
-    void print();
-    static Matrix* con_matrix_multiply(Matrix* m1, Matrix* m2);
-    static Matrix* add(Matrix* m1, Matrix* m2);
-    static Matrix* subtract(Matrix* m1, Matrix* m2);
-    static Matrix* multiply(Matrix* m1, Matrix* m2);
-    static Matrix* concatenate(Matrix* a, Matrix* b, Matrix* c, Matrix* d, bool trim);
-
-private:
-    bool isScaler();
+    void print(vector<int>& storage);
+    static void con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
+    static void add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
+    static void subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
+    static void multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
+    static void concatenate(vector<int>& s1, vector<int>& s2, vector<int>& s3, vector<int>& s4, vector<int>& result, Matrix& m);
 };
 
 #endif
