@@ -14,17 +14,6 @@ Matrix::~Matrix()
 {
 }
 
-int Matrix::getElement(vector<int>& storage, size_t row, size_t column)
-{
-    int element = 0;
-    size_t r = row + this->top;
-    size_t c = column + this->left;
-    size_t dim = sqrt(storage.size());
-    if (r < dim && c < dim)
-        element = storage[r * dim + c];
-    return element;
-}
-
 void Matrix::add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
     size_t dim = m1.dimension;

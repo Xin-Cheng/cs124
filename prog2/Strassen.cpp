@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-    const size_t dim = 1024;
+    const size_t dim = 7;
     vector<int> s1 (dim*dim);
     vector<int> s2 (dim*dim);
     vector<int> product (dim*dim);
@@ -26,12 +26,12 @@ int main()
     auto sstart = chrono::steady_clock::now();
     Matrix::multiply(s1, m, s2, m, product); 
     auto sfinish = chrono::steady_clock::now();
-    // m.print(product);
+    m.print(product);
     auto cstart = chrono::steady_clock::now();
     Matrix::con_matrix_multiply(s1, m, s2, m, con_product); 
     auto cfinish = chrono::steady_clock::now();
-    // m.print(product);
-    printf("%ds: Strassen\n", (sfinish - sstart).count()/1000000000);
-    printf("%ds: Conventional\n", (cfinish - cstart).count()/1000000000);
+    m.print(product);
+    printf("%dms: Strassen\n", (sfinish - sstart).count()/1000000);
+    printf("%dms: Conventional\n", (cfinish - cstart).count()/1000000);
     return 0;
 }

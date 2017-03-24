@@ -17,9 +17,6 @@ public:
     ~Matrix();
 
 public:
-    int getElement(vector<int>& storage, size_t row, size_t column);
-
-public:
     void print(vector<int>& storage);
     static void con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
     static void add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
