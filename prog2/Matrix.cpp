@@ -3,10 +3,11 @@
 
 using namespace std;
 
-Matrix::Matrix(size_t top, size_t left, size_t dimension)
+Matrix::Matrix(size_t top, size_t left, size_t dimension, size_t storageD)
     : top(top)
     , left(left)
     , dimension(dimension)
+    , storageD(storageD)
 {
 }
 
@@ -17,7 +18,7 @@ Matrix::~Matrix()
 void Matrix::add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
     size_t dim = m1.dimension;
-    size_t bound = sqrt(s1.size());
+    size_t bound = m1.storageD;
     size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
     for (size_t i = 0; i < dim; i++)
         for (size_t j = 0; j < dim; j++)
@@ -31,7 +32,7 @@ void Matrix::add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<
 void Matrix::subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
     size_t dim = m1.dimension;
-    size_t bound = sqrt(s1.size());
+    size_t bound = m1.storageD;
     size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
     for (size_t i = 0; i < dim; i++)
         for (size_t j = 0; j < dim; j++)
@@ -45,35 +46,31 @@ void Matrix::subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, ve
 
 void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
 {
-    if (m1.dimension == 1)
+    size_t dimension = m1.dimension;
+    if (dimension < 150)
     {
         Matrix::con_matrix_multiply(s1, m1, s2, m2, result);
         return;
     }
-
-    size_t dim = (m1.dimension + 1)/2;   
+    size_t dim = (dimension + 1)/2, r = m1.top, co = m1.left, sd = m1.storageD;   
     // partition lhs, rhs
-    size_t r = m1.top;
-    size_t co = m1.left;
-    Matrix a = Matrix(r, co, dim);
-    Matrix b = Matrix(r, co + dim, dim); 
-    Matrix c = Matrix(r + dim, co, dim);   
-    Matrix d = Matrix(r + dim, co + dim, dim);
-    // a.print(s1);
-    // b.print(s1);
-    // c.print(s1);
-    // d.print(s1);
+    Matrix a = Matrix(r, co, dim, sd);
+    Matrix b = Matrix(r, co + dim, dim, sd); 
+    Matrix c = Matrix(r + dim, co, dim, sd);   
+    Matrix d = Matrix(r + dim, co + dim, dim, sd);
+
     r = m2.top;
     co = m2.left;
-    Matrix e = Matrix(r, co, dim);
-    Matrix f = Matrix(r, co + dim, dim);
-    Matrix g = Matrix(r + dim, co, dim);
-    Matrix h = Matrix(r + dim, co + dim, dim);
+    sd = m2.storageD;
+    Matrix e = Matrix(r, co, dim, sd);
+    Matrix f = Matrix(r, co + dim, dim, sd);
+    Matrix g = Matrix(r + dim, co, dim, sd);
+    Matrix h = Matrix(r + dim, co + dim, dim, sd);
 
     // compute seven products
     vector<int> pl (dim*dim);
     vector<int> pr (dim*dim);
-    Matrix m = Matrix(0, 0, dim);
+    Matrix m = Matrix(0, 0, dim, dim);
     
     vector<int> p1 (dim*dim);
     Matrix::subtract(s2, f, s2, h, pl);
@@ -122,10 +119,8 @@ void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, ve
     Matrix::subtract(cfdh, m, p3, m, cfdh);
     Matrix::subtract(cfdh, m, p7, m, cfdh);
 
-    size_t dimension = m1.dimension;
-    Matrix mr = Matrix(0, 0, dimension);
+    Matrix mr = Matrix(0, 0, dimension, dimension);
     Matrix::concatenate(aebg, afbh, cedg, cfdh, result, mr);   
-    // mr.print(result); 
 }
 
 void Matrix::concatenate(vector<int>& a, vector<int>& b, vector<int>& c, vector<int>& d, vector<int>& result, Matrix& m)
@@ -154,8 +149,8 @@ void Matrix::con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Ma
     size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
     if (dim == 1)
     {
-        size_t bound1 = sqrt(s1.size());
-        size_t bound2 = sqrt(s2.size());
+        size_t bound1 = m1.storageD;
+        size_t bound2 = m2.storageD;
         int left = r1 < bound1 && c1 < bound1 ? s1[r1 * bound1 + c1] : 0;
         int right = r2 < bound2 && c2 < bound2 ? s2[r2 * bound2 + c2] : 0;
         result[0] = left * right;
@@ -170,7 +165,7 @@ void Matrix::con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Ma
 void Matrix::print(vector<int>& storage)
 {
     size_t dim = this->dimension;
-    size_t bound = sqrt(storage.size());
+    size_t bound = this->storageD;
     for (size_t i = 0; i < dim; i++)
     {
         for (size_t j = 0; j < dim; j++)

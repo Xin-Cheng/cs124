@@ -10,10 +10,10 @@ using namespace std;
 class Matrix
 {
 public:
-    size_t top, left, dimension;
+    size_t top, left, dimension, storageD;
 
 public:
-    Matrix(size_t top, size_t left, size_t dimension);
+    Matrix(size_t top, size_t left, size_t dimension, size_t storageD);
     ~Matrix();
 
 public:
