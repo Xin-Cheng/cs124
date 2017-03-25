@@ -6,6 +6,7 @@ using namespace std;
 
 int time(size_t dimension, size_t cross);
 void calculate(size_t dimension, vector<vector<int>>& result);
+
 int main()
 {
     size_t dimension = 1024;

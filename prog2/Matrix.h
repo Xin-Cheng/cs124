@@ -19,6 +19,7 @@ public:
 
 public:
     void print(vector<int>& storage);
+    void printDiagonal(vector<int>& storage);
     static void con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
     static void add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
     static void subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
