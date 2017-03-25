@@ -4,7 +4,8 @@
 #include <cstddef>
 #include <stdio.h>
 #include <vector>
-#include <math.h>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 class Matrix
@@ -21,7 +22,7 @@ public:
     static void con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
     static void add(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
     static void subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
-    static void multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result);
+    static void multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result, size_t cross);
     static void concatenate(vector<int>& s1, vector<int>& s2, vector<int>& s3, vector<int>& s4, vector<int>& result, Matrix& m);
 };
 

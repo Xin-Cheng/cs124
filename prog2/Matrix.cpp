@@ -44,10 +44,10 @@ void Matrix::subtract(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, ve
 }
 
 
-void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result)
+void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, vector<int>& result, size_t cross)
 {
     size_t dimension = m1.dimension;
-    if (dimension < 150)
+    if (dimension <= cross)
     {
         Matrix::con_matrix_multiply(s1, m1, s2, m2, result);
         return;
@@ -74,34 +74,34 @@ void Matrix::multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Matrix m2, ve
     
     vector<int> p1 (dim*dim);
     Matrix::subtract(s2, f, s2, h, pl);
-    Matrix::multiply(s1, a, pl, m, p1); 
+    Matrix::multiply(s1, a, pl, m, p1, cross); 
     // m.print(p1);
     vector<int> p2 (dim*dim);
     Matrix::add(s1, a, s1, b, pl);
-    Matrix::multiply(pl, m, s2, h, p2); 
+    Matrix::multiply(pl, m, s2, h, p2, cross); 
     // m.print(p2);
     vector<int> p3 (dim*dim);
     Matrix::add(s1, c, s1, d, pl);
-    Matrix::multiply(pl, m, s2, e, p3); 
+    Matrix::multiply(pl, m, s2, e, p3, cross); 
 
     vector<int> p4 (dim*dim);
     Matrix::subtract(s2, g, s2, e, pl);
-    Matrix::multiply(s1, d, pl, m, p4);
+    Matrix::multiply(s1, d, pl, m, p4, cross);
 
     vector<int> p5 (dim*dim);
     Matrix::add(s1, a, s1, d, pl);
     Matrix::add(s2, e, s2, h, pr);
-    Matrix::multiply(pl, m, pr, m, p5);
+    Matrix::multiply(pl, m, pr, m, p5, cross);
 
     vector<int> p6 (dim*dim);
     Matrix::subtract(s1, b, s1, d, pl);
     Matrix::add(s2, g, s2, h, pr);
-    Matrix::multiply(pl, m, pr, m, p6);
+    Matrix::multiply(pl, m, pr, m, p6, cross);
 
     vector<int> p7 (dim*dim);
     Matrix::subtract(s1, a, s1, c, pl);
     Matrix::add(s2, e, s2, f, pr);
-    Matrix::multiply(pl, m, pr, m, p7);
+    Matrix::multiply(pl, m, pr, m, p7, cross);
     
     vector<int> aebg (dim*dim);
     Matrix::add(p5, m, p4, m, aebg);
