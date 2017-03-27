@@ -146,19 +146,16 @@ void Matrix::con_matrix_multiply(vector<int>& s1, Matrix m1, vector<int>& s2, Ma
 {
     size_t dim = m1.dimension;
     size_t r1 = m1.top, r2 = m2.top, c1 = m1.left, c2 = m2.left;
-    if (dim == 1)
-    {
-        size_t bound1 = m1.storageD;
-        size_t bound2 = m2.storageD;
-        int left = r1 < bound1 && c1 < bound1 ? s1[r1 * bound1 + c1] : 0;
-        int right = r2 < bound2 && c2 < bound2 ? s2[r2 * bound2 + c2] : 0;
-        result[0] = left * right;
-    }
-    else
-        for (size_t i = 0; i < dim; i++)
-            for (size_t k = 0; k < dim; k++)
-                for (size_t j = 0; j < dim; j++)
-                    result[i * dim + j] += s1[(i + r1) * dim + k + c1] * s2[(k + r2) * dim + j + c2];
+    size_t bound1 = m1.storageD;
+    size_t bound2 = m2.storageD;
+    for (size_t i = 0; i < dim; i++)
+        for (size_t k = 0; k < dim; k++)
+            for (size_t j = 0; j < dim; j++)
+            {
+                int left = i + r1 < bound1 && k + c1 < bound1 ? s1[(i + r1) * bound1 + k + c1] : 0;
+                int right = k + r2 < bound2 && j + c2 < bound2 ? s2[(k + r2) * bound2 + j + c2] : 0;
+                result[i * dim + j] += left * right;
+            }                   
 }
 
 void Matrix::print(vector<int>& storage)

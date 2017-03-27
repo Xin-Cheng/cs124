@@ -99,11 +99,9 @@ void test()
     auto sstart = chrono::steady_clock::now();
     Matrix::multiply(s1, m, s2, m, product, CrossPoint);
     auto sfinish = chrono::steady_clock::now();
-    // m.print(product); 
     auto cstart = chrono::steady_clock::now();
     Matrix::con_matrix_multiply(s1, m, s2, m, con_product);
     auto cfinish = chrono::steady_clock::now();
-    // m.print(con_product); 
     printf("%ld\n", CrossPoint);
     printf("%ld: Strassen\n", (sfinish - sstart).count());
     printf("%ld: Conventional\n", (cfinish - cstart).count());
