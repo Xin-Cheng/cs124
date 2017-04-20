@@ -1,2 +1,2 @@
 all:
-	g++ -std=c++11 -g partition.cpp -o kk
+	g++ -std=c++11 -g heap.cpp partition.cpp -o kk
