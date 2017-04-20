@@ -6,16 +6,16 @@ Heap::Heap()
     : size(0)
 {
 }
-Heap::Heap(int* arr, int size)
+Heap::Heap(long long* arr, int size)
     : size(size)
 {
-    this->elements = vector<int>(arr, arr + size);
+    this->elements = vector<long long>(arr, arr + size);
 }
 Heap::~Heap()
 {
 }
 
-void Heap::insert(int value)
+void Heap::insert(long long value)
 {
     this->elements.push_back(value);
     this->size++;
@@ -25,9 +25,9 @@ void Heap::insert(int value)
     this->elements[idx] = value;
 }
 
-int Heap::deleteMax()
+long long Heap::deleteMax()
 {
-    int max = this->elements[0];
+    long long max = this->elements[0];
     this->elements[0] = this->elements[this->size - 1];
     this->elements.pop_back();
     this->size--;
@@ -43,7 +43,7 @@ void Heap::buildHeap()
 void Heap::maxHeapify(int idx)
 {
     int child;
-    int temp = this->elements[idx];
+    long long temp = this->elements[idx];
     int size = this->size;
     for (; idx * 2 + 1 < size; idx = child)
     {
@@ -58,14 +58,14 @@ void Heap::maxHeapify(int idx)
     this->elements[idx] = temp;
 }
 
-int Heap::kk()
+long long Heap::kk()
 {
     this->buildHeap();
     int size = this->size;     
     while (size > 2)
     {
-        int max = deleteMax();
-        int nextMax = deleteMax();
+        long long max = deleteMax();
+        long long nextMax = deleteMax();
         insert(max - nextMax);
         size = this->size;
     }

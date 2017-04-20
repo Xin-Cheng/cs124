@@ -10,15 +10,15 @@ class Heap
 {
 public:
     int size;
-    vector<int> elements;
+    vector<long long> elements;
 public:
     Heap();
-    Heap(int* arr, int sizes);
+    Heap(long long* arr, int sizes);
     ~Heap();
 public:
-    int kk();
-    void insert(int value);
-    int deleteMax();
+    long long kk();
+    void insert(long long value);
+    long long deleteMax();
 private:
     void buildHeap();
     void maxHeapify(int idx);
