@@ -1,15 +1,21 @@
 #include "Heap.h"
 #include "Solution.h"
+#include "ctime"
 #include <math.h>
 #include <typeinfo>
+#include <string>
+#include <fstream>
+#include <iterator>
 
 using namespace std;
 #define MAX_RAND 1000000000000
 #define MAX_ITER 25000
+#define LENGTH 100
 
 Solution* repeatedRandom(Solution* s, Heap& h);
 Solution* hillClimbing(Solution* s, Heap& h);
 Solution* simulatedAnneal(Solution* s, Heap& h);
+
 void compare(Solution* s, Solution* p, Heap& h);
 
 int main()
@@ -18,14 +24,13 @@ int main()
     Solution* s = new RandomSolution();
     Solution* p = new PartitionedSolution();
     srand(time(NULL));
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < LENGTH; i++)
     {
         long long r1 = rand();
         long long r2 = (r1 << 32) | rand();
         h.insert(r2 % MAX_RAND + 1);
-        // h.insert(i);
         r1 % 2 ? s->solution.push_back(1) : s->solution.push_back(-1);
-        p->solution.push_back(r1 % 10);
+        p->solution.push_back(r1 % LENGTH);
     }
     compare(s, p, h);
     return 0;
@@ -33,20 +38,81 @@ int main()
 
 void compare(Solution* s, Solution* p, Heap& h)
 {
-    // Solution* rrs = repeatedRandom(s, h);
-    // Solution* rrp = repeatedRandom(p, h);
-    // Solution* hcs = hillClimbing(s, h);
-    // Solution* hcp = hillClimbing(p, h);
-    Solution* sas = simulatedAnneal(s, h);
-    Solution* sap = simulatedAnneal(p, h);
-    long long kr = h.kk();
-    // long long rrsr = rrs->residue(h.elements);
-    // long long rrpr = rrp->residue(h.elements);
-    // long long hcsr = hcs->residue(h.elements);
-    // long long hcpr = hcp->residue(h.elements);
-    long long sasr = sas->residue(h.elements);
-    long long sapr = sap->residue(h.elements);
-    int cdd = 0;
+    vector<string> timeTitle = { "RRS_Time", "RRP_Time", "HCS_Time", "HCP_Time", "SAS_Time", "SAP_Time" };
+    vector<vector<double>> timeTable;
+    vector<string> residueTitle = { "KK", "RRS", "RRP", "HCS", "HCP", "SAS", "SAP" };
+    vector<vector<long long>> residueTable;
+
+    int iteration = 100;
+    for (int i = 0; i < iteration; i++)
+    {
+        vector<double> timeRow;
+        vector<long long> residueRow;
+        clock_t itBegin = clock();
+        Solution* rrs = repeatedRandom(s, h);
+        clock_t itEnd = clock();
+        timeRow.push_back(((double)(itEnd - itBegin)) / CLOCKS_PER_SEC);
+
+        itBegin = clock();
+        Solution* rrp = repeatedRandom(p, h);
+        itEnd = clock();
+        timeRow.push_back(((double)(itEnd - itBegin)) / CLOCKS_PER_SEC);
+
+        itBegin = clock();
+        Solution* hcs = hillClimbing(s, h);
+        itEnd = clock();
+        timeRow.push_back(((double)(itEnd - itBegin)) / CLOCKS_PER_SEC);
+
+        itBegin = clock();
+        Solution* hcp = hillClimbing(p, h);
+        itEnd = clock();
+        timeRow.push_back(((double)(itEnd - itBegin)) / CLOCKS_PER_SEC);
+
+        itBegin = clock();
+        Solution* sas = simulatedAnneal(s, h);
+        itEnd = clock();
+        timeRow.push_back(((double)(itEnd - itBegin)) / CLOCKS_PER_SEC);
+
+        itBegin = clock();
+        Solution* sap = simulatedAnneal(p, h);
+        itEnd = clock();
+        timeRow.push_back(((double)(itEnd - itBegin)) / CLOCKS_PER_SEC);
+
+        residueRow.push_back(h.kk());
+        residueRow.push_back(rrs->residue(h.elements));
+        residueRow.push_back(rrp->residue(h.elements));
+        residueRow.push_back(hcs->residue(h.elements));
+        residueRow.push_back(hcp->residue(h.elements));
+        residueRow.push_back(sas->residue(h.elements));
+        residueRow.push_back(sap->residue(h.elements));
+
+        timeTable.push_back(timeRow);
+        residueTable.push_back(residueRow);
+    }
+
+    ofstream timeFile;
+    timeFile.open("time.csv");
+    ostream_iterator<string> timeIterator(timeFile, "\t");
+    copy(timeTitle.begin(), timeTitle.end(), timeIterator);
+    timeFile << endl;
+
+    ofstream residueFile;
+    residueFile.open("residue.csv");
+    ostream_iterator<string> residuIterator(residueFile, "\t");
+    copy(residueTitle.begin(), residueTitle.end(), residuIterator);
+    residueFile << endl;
+
+    for (int i = 0; i < iteration; i++)
+    {
+        ostream_iterator<double> timeIterator(timeFile, "\t");
+        copy(timeTable[i].begin(), timeTable[i].end(), timeIterator);
+        timeFile << endl;
+        ostream_iterator<long long> residuIterator(residueFile, "\t");
+        copy(residueTable[i].begin(), residueTable[i].end(), residuIterator);
+        residueFile << endl;
+    }
+    timeFile.close();
+    residueFile.close();
 }
 
 Solution* repeatedRandom(Solution* s, Heap& h)

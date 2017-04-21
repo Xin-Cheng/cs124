@@ -1,7 +1,7 @@
 #include "Solution.h"
 #include "Heap.h"
 
-#define LENGTH 10
+#define LENGTH 100
 
 Solution::Solution()
 {
