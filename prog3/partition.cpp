@@ -1,3 +1,5 @@
+/// Programming assignment 3
+/// HUID: 51272056
 #include "Heap.h"
 #include "Solution.h"
 #include "ctime"
@@ -6,6 +8,8 @@
 #include <string>
 #include <fstream>
 #include <iterator>
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 #define MAX_RAND 1000000000000
@@ -16,11 +20,19 @@ Solution* repeatedRandom(Solution* s, Heap& h);
 Solution* hillClimbing(Solution* s, Heap& h);
 Solution* simulatedAnneal(Solution* s, Heap& h);
 
-void compare(Solution* s, Solution* p, Heap& h);
+void compare(Solution* s, Solution* p, Heap& h, int times);
 
-int main()
+int main(int argc, char *argv[])
 {
     Heap h;
+    if (argc == 2)
+    {
+        long long value;
+        FILE* file = fopen(argv[1], "r");
+        for (int i = 0; i < LENGTH && fscanf(file, "%lld", &value) == 1; i++)
+            h.insert(value);
+        fclose (file);
+    }
     Solution* s = new RandomSolution();
     Solution* p = new PartitionedSolution();
     srand(time(NULL));
@@ -28,22 +40,25 @@ int main()
     {
         long long r1 = rand();
         long long r2 = (r1 << 32) | rand();
-        h.insert(r2 % MAX_RAND + 1);
+        if (argc != 2)
+            h.insert(r2 % MAX_RAND + 1);
         r1 % 2 ? s->solution.push_back(1) : s->solution.push_back(-1);
         p->solution.push_back(r1 % LENGTH);
     }
-    compare(s, p, h);
+    printf("%lld\n", h.kk());
+    if (argc == 3)
+        compare(s, p, h, atoi(argv[2]));
     return 0;
 }
 
-void compare(Solution* s, Solution* p, Heap& h)
+void compare(Solution* s, Solution* p, Heap& h, int times)
 {
     vector<string> timeTitle = { "RRS_Time", "RRP_Time", "HCS_Time", "HCP_Time", "SAS_Time", "SAP_Time" };
     vector<vector<double>> timeTable;
     vector<string> residueTitle = { "KK", "RRS", "RRP", "HCS", "HCP", "SAS", "SAP" };
     vector<vector<long long>> residueTable;
 
-    int iteration = 100;
+    int iteration = times;
     for (int i = 0; i < iteration; i++)
     {
         vector<double> timeRow;
