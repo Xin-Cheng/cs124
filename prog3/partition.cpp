@@ -2,8 +2,10 @@
 #include "Solution.h"
 
 using namespace std;
-long long MAX_RAND = 1000000000000;
+#define MAX_RAND 1000000000000
+#define MAX_ITER 25000
 
+Solution* repeatedRandom(Solution* s, Heap& input);
 int main()
 {
     Heap h;
@@ -19,9 +21,21 @@ int main()
         r1 % 2 ? s->solution.push_back(1) : s->solution.push_back(-1);
         p->solution.push_back(r1 % 10);
     }
-    long long rs = s->residue(h.elements);
-    long long rp = p->residue(h.elements);
-    long long rk = h.kk();
+    // long long rs = s->residue(h.elements);
+    // long long rp = p->residue(h.elements);
+    // long long rk = h.kk();
+    Solution* ss = repeatedRandom(s, h);
     return 0;
+}
+
+Solution* repeatedRandom(Solution* s, Heap& input)
+{
+    for (int i = 0; i < MAX_ITER; i++)
+    {
+        Solution* sp = s->move();
+        long long spr = sp->residue(input.elements);
+        long long sr = s->residue(input.elements);
+    }
+    return s;
 }
 

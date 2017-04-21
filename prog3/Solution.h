@@ -13,9 +13,10 @@ public:
     vector<int> solution;
 public:
     Solution();
+    Solution(vector<int> solution);
     virtual ~Solution();
 public:
-    virtual void move() = 0;
+    virtual Solution* move() = 0;
     virtual long long residue(vector<long long> input) = 0;
 };
 
@@ -23,9 +24,10 @@ class RandomSolution:public Solution
 {
 public:
     RandomSolution();
+    RandomSolution(vector<int> solution);
     virtual ~RandomSolution();
 public:
-    virtual void move();
+    virtual Solution* move();
     virtual long long residue(vector<long long> input);
 };
 
@@ -33,9 +35,10 @@ class PartitionedSolution :public Solution
 {
 public:
     PartitionedSolution();
+    PartitionedSolution(vector<int> solution);
     virtual ~PartitionedSolution();
 public:
-    virtual void move();
+    virtual Solution* move();
     virtual long long residue(vector<long long> input);
 };
 

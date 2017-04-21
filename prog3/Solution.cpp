@@ -6,6 +6,10 @@
 Solution::Solution()
 {
 }
+Solution::Solution(vector<int> solution)
+    :solution(solution)
+{
+}
 Solution::~Solution()
 {
 }
@@ -14,19 +18,26 @@ RandomSolution::RandomSolution()
     :Solution()
 {
 }
+RandomSolution::RandomSolution(vector<int> solution)
+    :Solution(solution)
+{
+}
 RandomSolution::~RandomSolution()
 {
 }
-void RandomSolution::move()
+Solution* RandomSolution::move()
 {
+    vector<int> newSol;
+    newSol = this->solution;
     srand(time(NULL));
     int i = rand() % LENGTH;
     int j = rand() % LENGTH;
     while (j == i)
         j = rand() % LENGTH;
     if (i % 2)
-        this->solution[i] *= -1;
-    this->solution[j] *= -1;
+        newSol[i] *= -1;
+    newSol[j] *= -1;
+    return new RandomSolution (newSol);
 }
 long long RandomSolution::residue(vector<long long> input)
 {
@@ -41,18 +52,25 @@ PartitionedSolution::PartitionedSolution()
     :Solution()
 {
 }
+PartitionedSolution::PartitionedSolution(vector<int> solution)
+    :Solution(solution)
+{
+}
 PartitionedSolution::~PartitionedSolution()
 {
 }
 
-void PartitionedSolution::move()
+Solution* PartitionedSolution::move()
 {
+    vector<int> newSol;
+    newSol = this->solution;
     srand(time(NULL));
     int i = rand() % LENGTH;
     int j = rand() % LENGTH;
-    while (this->solution[i] == j)
+    while (newSol[i] == j)
         j = rand() % LENGTH;
-    this->solution[i] = j;
+    newSol[i] = j;
+    return new PartitionedSolution (newSol);
 }
 long long PartitionedSolution::residue(vector<long long> input)
 {
