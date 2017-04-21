@@ -1,13 +1,16 @@
 #include "Heap.h"
 #include "Solution.h"
+#include <math.h>
+#include <typeinfo>
 
 using namespace std;
 #define MAX_RAND 1000000000000
-#define MAX_ITER 250000
+#define MAX_ITER 25000
 
-Solution* repeatedRandom(Solution* s, Heap& input);
-Solution* hillClimbing(Solution* s, Heap& input);
-void compare(Solution* s, Solution* p, Heap& input);
+Solution* repeatedRandom(Solution* s, Heap& h);
+Solution* hillClimbing(Solution* s, Heap& h);
+Solution* simulatedAnneal(Solution* s, Heap& h);
+void compare(Solution* s, Solution* p, Heap& h);
 
 int main()
 {
@@ -30,15 +33,19 @@ int main()
 
 void compare(Solution* s, Solution* p, Heap& h)
 {
-    Solution* rrs = repeatedRandom(s, h);
-    Solution* rrp = repeatedRandom(p, h);
-    Solution* hcs = hillClimbing(s, h);
-    Solution* hcp = hillClimbing(p, h);
-    long long rrsr = rrs->residue(h.elements);
-    long long rrpr = rrp->residue(h.elements);
-    long long hcsr = hcs->residue(h.elements);
-    long long hcpr = hcp->residue(h.elements);
+    // Solution* rrs = repeatedRandom(s, h);
+    // Solution* rrp = repeatedRandom(p, h);
+    // Solution* hcs = hillClimbing(s, h);
+    // Solution* hcp = hillClimbing(p, h);
+    Solution* sas = simulatedAnneal(s, h);
+    Solution* sap = simulatedAnneal(p, h);
     long long kr = h.kk();
+    // long long rrsr = rrs->residue(h.elements);
+    // long long rrpr = rrp->residue(h.elements);
+    // long long hcsr = hcs->residue(h.elements);
+    // long long hcpr = hcp->residue(h.elements);
+    long long sasr = sas->residue(h.elements);
+    long long sapr = sap->residue(h.elements);
     int cdd = 0;
 }
 
@@ -68,3 +75,30 @@ Solution* hillClimbing(Solution* s, Heap& h)
     return s;
 }
 
+Solution* simulatedAnneal(Solution* s, Heap& h)
+{
+    Solution* spp;
+    if (typeid(s) == typeid(RandomSolution))
+        spp = new RandomSolution(s->solution);
+    else
+        spp = new PartitionedSolution(s->solution);
+
+    for (int i = 0; i < MAX_ITER; i++)
+    {
+        Solution* sp = s->move();
+        long long spr = sp->residue(h.elements);
+        long long sr = s->residue(h.elements);
+        if (spr < sr)
+            s = sp;
+        else
+        {
+            double tier = pow(10, 10) * pow(0.8, floor((double)i/300));
+            double pr = exp((double)(sr - spr)/tier);
+            if (pr > 0.5)
+                s = sp;
+        }
+        if (s->residue(h.elements) < spp->residue(h.elements))
+            spp = s;
+    }
+    return spp;
+}
