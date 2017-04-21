@@ -17,6 +17,7 @@ public:
     virtual ~Solution();
 public:
     virtual Solution* move() = 0;
+    virtual Solution* random() = 0;
     virtual long long residue(vector<long long> input) = 0;
 };
 
@@ -28,6 +29,7 @@ public:
     virtual ~RandomSolution();
 public:
     virtual Solution* move();
+    virtual Solution* random();
     virtual long long residue(vector<long long> input);
 };
 
@@ -39,6 +41,7 @@ public:
     virtual ~PartitionedSolution();
 public:
     virtual Solution* move();
+    virtual Solution* random();
     virtual long long residue(vector<long long> input);
 };
 

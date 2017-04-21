@@ -6,6 +6,9 @@ using namespace std;
 #define MAX_ITER 250000
 
 Solution* repeatedRandom(Solution* s, Heap& input);
+Solution* hillClimbing(Solution* s, Heap& input);
+void compare(Solution* s, Solution* p, Heap& input);
+
 int main()
 {
     Heap h;
@@ -21,21 +24,44 @@ int main()
         r1 % 2 ? s->solution.push_back(1) : s->solution.push_back(-1);
         p->solution.push_back(r1 % 10);
     }
-    Solution* ss = repeatedRandom(s, h);
-    Solution* pp = repeatedRandom(p, h);
-    long long sr = ss->residue(h.elements);
-    long long pr = pp->residue(h.elements);
-    long long kr = h.kk();
+    compare(s, p, h);
     return 0;
 }
 
-Solution* repeatedRandom(Solution* s, Heap& input)
+void compare(Solution* s, Solution* p, Heap& h)
+{
+    Solution* rrs = repeatedRandom(s, h);
+    Solution* rrp = repeatedRandom(p, h);
+    Solution* hcs = hillClimbing(s, h);
+    Solution* hcp = hillClimbing(p, h);
+    long long rrsr = rrs->residue(h.elements);
+    long long rrpr = rrp->residue(h.elements);
+    long long hcsr = hcs->residue(h.elements);
+    long long hcpr = hcp->residue(h.elements);
+    long long kr = h.kk();
+    int cdd = 0;
+}
+
+Solution* repeatedRandom(Solution* s, Heap& h)
+{
+    for (int i = 0; i < MAX_ITER; i++)
+    {
+        Solution* sp = s->random();
+        long long spr = sp->residue(h.elements);
+        long long sr = s->residue(h.elements);
+        if (spr < sr)
+            s = sp;
+    }
+    return s;
+}
+
+Solution* hillClimbing(Solution* s, Heap& h)
 {
     for (int i = 0; i < MAX_ITER; i++)
     {
         Solution* sp = s->move();
-        long long spr = sp->residue(input.elements);
-        long long sr = s->residue(input.elements);
+        long long spr = sp->residue(h.elements);
+        long long sr = s->residue(h.elements);
         if (spr < sr)
             s = sp;
     }
